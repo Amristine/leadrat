@@ -37,7 +37,7 @@ npm start
 
 This version deliberately has **no Supabase or external database connection** yet. Records are stored in the current browser's localStorage. This makes it useful for reviewing the product and trying the main workflows, but data is local to one browser/device and is not suitable for production or shared teams. Workspace settings are currently held in the running session.
 
-The dashboard uses seed/demo records and illustrative activity history. Some team/campaign metrics are sample values, not business analytics from a live system. Campaign creation is currently a demo interaction rather than an ad-platform sync.
+The dashboard uses seed/demo records and illustrative activity history. Some team/campaign metrics are sample values, not business analytics from a live system. Campaign records are saved locally; automatic sync with advertising platforms is not connected.
 
 ## Before production
 
