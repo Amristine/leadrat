@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Mail, Menu, MessageCircle, MoreHorizontal, MapPin, Phone, Plus, Search,
   Settings, SlidersHorizontal, Sparkles, Target, Trash2, TrendingUp, UserRound, Users, X
 } from "lucide-react";
-import type { Activity as LeadActivity, Lead, LeadSource, LeadStatus, Property, SiteVisit, Task, TeamMember } from "@/lib/types";
+import type { Activity as LeadActivity, Campaign, Lead, LeadSource, LeadStatus, Property, SiteVisit, Task, TeamMember } from "@/lib/types";
 import { localStore } from "@/lib/local-store";
 
 type Page = "Dashboard" | "Manage Leads" | "Properties" | "Follow-ups" | "Site Visits" | "Campaigns" | "Team" | "Reports" | "Settings";
@@ -42,7 +42,8 @@ export default function CRMApp() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [visits, setVisits] = useState<SiteVisit[]>([]);
-  const [team, setTeam] = useState<TeamMember[]>([]);\n  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [team, setTeam] = useState<TeamMember[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [ready, setReady] = useState(false);
   const [search, setSearch] = useState("");
   const [leadStatus, setLeadStatus] = useState("");
@@ -116,7 +117,9 @@ export default function CRMApp() {
     setModal(null); setPage("Team"); notify("Team member added to demo workspace");
   };
   const createCampaign = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault(); setModal(null); notify("Campaign saved in this demo session");
+    event.preventDefault(); const form = new FormData(event.currentTarget);
+    const campaign: Campaign = { id: uid("CP"), name: String(form.get("name")), channel: String(form.get("channel")), startDate: String(form.get("startDate") || new Date().toISOString().slice(0, 10)), budget: Number(form.get("budget") || 0), status: "Active" };
+    setCampaigns(current => [campaign, ...current]); setModal(null); setPage("Campaigns"); notify("Campaign created");
   };
   const exportLeads = () => {
     const header = ["ID", "Name", "Phone", "Email", "Source", "Budget", "Property", "Area", "Status", "Agent", "Follow-up"];
