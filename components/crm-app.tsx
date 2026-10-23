@@ -160,7 +160,7 @@ export default function CRMApp() {
     <main className="main-area">
       <header className="topbar"><button className="mobile-menu" onClick={() => setSidebarOpen((open) => !open)} aria-label="Toggle navigation"><Menu size={19}/></button><div className="breadcrumbs"><span>Workspace</span><span className="crumb-slash">/</span><b>{pageTitle}</b></div><div className="topbar-actions"><label className="global-search"><Search size={16}/><input value={search} onChange={(e) => { setSearch(e.target.value); if (e.target.value && page !== "Manage Leads") setPage("Manage Leads"); }} placeholder="Search leads, phone, area…"/><kbd>⌘ K</kbd></label><button className="top-icon" aria-label="Help" onClick={() => notify("Help center coming soon")}><CircleHelp size={17}/></button><button className="top-icon notification-button" aria-label="Notifications" onClick={() => go("Follow-ups")}><Bell size={17}/><i/></button><span className="top-user-avatar">RS</span></div></header>
       <section className="page-content">
-        <div className="page-heading"><div><div className="eyebrow">ACME REALTY / WORKSPACE</div><h1>{page === "Dashboard" ? "Good morning, Raj" : pageTitle}<span className="heading-emoji">{page === "Dashboard" ? " 👋" : ""}</span></h1><p>{page === "Dashboard" ? "Here’s what’s happening with your property business today." : pageDescription(page)}</p></div><div className="heading-actions">{headingActions}</div></div>
+        <div className="page-heading"><div><div className="eyebrow">{workspaceName.toUpperCase()} / WORKSPACE</div><h1>{page === "Dashboard" ? "Overview" : pageTitle}</h1><p>{page === "Dashboard" ? "Here’s what’s happening with your property business today." : pageDescription(page)}</p></div><div className="heading-actions">{headingActions}</div></div>
         {!ready ? <div className="loading-panel">Preparing your workspace…</div> : <>
           {page === "Dashboard" && <Dashboard leads={leads} tasks={tasks} visits={visits} onOpenLead={setSelectedLead} onGo={go} onNewTask={() => setModal("task")}/>}
           {page === "Manage Leads" && <LeadsPage leads={filteredLeads} allCount={leads.length} search={search} setSearch={setSearch} status={leadStatus} setStatus={setLeadStatus} source={leadSource} setSource={setLeadSource} onOpenLead={setSelectedLead} onBulkStatus={(ids, status) => setLeads(current => current.map(lead => ids.includes(lead.id) ? {...lead, status, activity:[{id:uid("ACT"),title:"Status updated",description:"Bulk status update",date:"Just now"},...lead.activity]} : lead))} onExport={exportLeads} onAdd={() => setModal("lead")} onDelete={deleteLead}/>}
@@ -200,21 +200,23 @@ function Dashboard({leads,tasks,visits,onOpenLead,onGo,onNewTask}:{leads:Lead[];
   const booked = leads.filter((l) => l.status === "Booked").length;
   const openTasks = tasks.filter((t) => !t.completed);
   const stages: {label:LeadStatus;count:number;color:string}[] = [
-    {label:"New",count:leads.filter((l)=>l.status==="New").length,color:"#2b705a"},
-    {label:"Contacted",count:leads.filter((l)=>l.status==="Contacted").length,color:"#8eb8a4"},
-    {label:"Visit Scheduled",count:leads.filter((l)=>l.status==="Visit Scheduled").length,color:"#e5b17f"},
-    {label:"Negotiation",count:leads.filter((l)=>l.status==="Negotiation").length,color:"#a994c8"},
+    {label:"New",count:leads.filter((l)=>l.status==="New").length,color:"#2f6f5b"},
+    {label:"Contacted",count:leads.filter((l)=>l.status==="Contacted").length,color:"#83aa97"},
+    {label:"Visit Scheduled",count:leads.filter((l)=>l.status==="Visit Scheduled").length,color:"#c8a66a"},
+    {label:"Negotiation",count:leads.filter((l)=>l.status==="Negotiation").length,color:"#8d99ae"},
+    {label:"Booked",count:leads.filter((l)=>l.status==="Booked").length,color:"#4f8b78"},
+    {label:"Lost",count:leads.filter((l)=>l.status==="Lost").length,color:"#c47c75"},
   ];
   const total = stages.reduce((sum,s)=>sum+s.count,0) || 1;
   return <>
     <div className="stats-grid">
-      <StatCard title="Total leads" value={leads.length} note="in your workspace" trend="↗ Live" icon={Users}/>
+      <StatCard title="Total leads" value={leads.length} note="in your workspace" icon={Users}/>
       <StatCard title="New enquiries" value={leads.filter((l)=>l.status==="New").length} note="need first contact" icon={Sparkles} tone="orange"/>
-      <StatCard title="Site visits" value={visits.length} note="scheduled visits" trend="↗ Active" icon={MapPin} tone="blue"/>
+      <StatCard title="Site visits" value={visits.length} note="scheduled visits" icon={MapPin} tone="blue"/>
       <StatCard title="Bookings" value={booked} note="confirmed in CRM" icon={Home} tone="purple"/>
     </div>
     <div className="dashboard-grid">
-      <section className="panel"><PanelHeading title="Lead activity" subtitle="Sample enquiry trend across the month" right={<select className="select-control" defaultValue="30 days"><option>30 days</option><option>7 days</option><option>90 days</option></select>}/><LeadTrendChart/><div className="panel-foot"><span>Local demo data</span><span><b>{leads.length}</b> saved lead records</span></div></section>
+      <section className="panel"><PanelHeading title="Lead sources" subtitle="Enquiries by acquisition channel" right={<select className="select-control" defaultValue="30 days"><option>30 days</option><option>7 days</option><option>90 days</option></select>}/><LeadSourceChart leads={leads}/><div className="panel-foot"><span>Source mix</span><span><b>{leads.length}</b> total enquiries</span></div></section>
       <section className="panel"><PanelHeading title="Lead pipeline" subtitle="Leads by current stage" right={<button className="icon-button" onClick={()=>onGo("Manage Leads")} aria-label="View leads"><ArrowRight size={16}/></button>}/><div className="pipeline-layout"><div className="donut-chart" style={{background:stageGradient(stages,total)}}><div className="donut-inner"><b>{leads.length}</b><span>Total leads</span></div></div><div className="pipeline-legend">{stages.map((stage)=><div className="pipeline-row" key={stage.label}><i style={{background:stage.color}}/><span>{stage.label}</span><b>{stage.count}</b></div>)}</div></div><div className="panel-foot"><span>Booked leads</span><b>{booked}</b></div></section>
     </div>
     <div className="dashboard-grid lower-grid">
@@ -228,9 +230,19 @@ function stageGradient(stages:{count:number;color:string}[],total:number) {
   if(pos<100)parts.push("#e1e9e4 "+pos+"% 100%");
   return "conic-gradient("+parts.join(",")+")";
 }
-function LeadTrendChart() {
-  const values=[24,31,28,42,37,50,45,62,57,72,66,84];
-  return <div className="trend-chart"><div className="chart-y-labels"><span>100</span><span>75</span><span>50</span><span>25</span><span>0</span></div><div className="chart-area"><div className="chart-grid-lines"><i/><i/><i/><i/><i/></div><svg viewBox="0 0 600 200" preserveAspectRatio="none" aria-label="Illustrative lead trend"><defs><linearGradient id="leadArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#347b62" stopOpacity=".18"/><stop offset="100%" stopColor="#347b62" stopOpacity="0"/></linearGradient></defs><path d={"M "+values.map((v,i)=>(i*600/(values.length-1))+" "+(190-v*1.7)).join(" L ")+" L 600 200 L 0 200 Z"} fill="url(#leadArea)"/><path d={"M "+values.map((v,i)=>(i*600/(values.length-1))+" "+(190-v*1.7)).join(" L ")} fill="none" stroke="#347b62" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/></svg><div className="chart-x-labels">{["01 Oct","03 Oct","05 Oct","07 Oct","09 Oct","11 Oct","13 Oct","15 Oct","17 Oct","19 Oct","21 Oct","23 Oct"].map((d)=><span key={d}>{d}</span>)}</div></div></div>;
+function LeadSourceChart({leads}:{leads:Lead[]}) {
+  const rows = sources.map((source) => ({
+    source,
+    count: leads.filter((lead) => lead.source === source).length,
+  })).filter((row) => row.count > 0).sort((a, b) => b.count - a.count);
+  const max = Math.max(1, ...rows.map((row) => row.count));
+  if (!rows.length) return <EmptyState title="No source data yet" text="New enquiries will appear here as leads are added."/>;
+  return <div className="source-chart">{rows.slice(0, 6).map((row) => (
+    <div className="source-chart-row" key={row.source}>
+      <div className="source-chart-meta"><span>{row.source}</span><b>{row.count}<small>{Math.round(row.count / leads.length * 100)}%</small></b></div>
+      <div className="source-chart-track"><i style={{ width: (row.count / max * 100) + "%" }}/></div>
+    </div>
+  ))}</div>;
 }
 function PanelHeading({title,subtitle,right}:{title:string;subtitle:string;right?:ReactNode}){return <div className="panel-heading"><div><h2>{title}</h2><p>{subtitle}</p></div>{right&&<div className="panel-heading-right">{right}</div>}</div>}
 function LeadTable({leads,onOpen,compact=false,onDelete}:{leads:Lead[];onOpen:(lead:Lead)=>void;compact?:boolean;onDelete?:(id:string)=>void}) {
