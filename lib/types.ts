@@ -10,3 +10,5 @@ export type Property = { id: string; name: string; type: string; location: strin
 export type Task = { id: string; title: string; description: string; due: string; kind: "Call" | "Site visit" | "Email" | "Meeting"; leadName: string; completed: boolean };
 export type SiteVisit = { id: string; leadName: string; propertyName: string; date: string; agent: string; status: "Confirmed" | "Pending" | "Completed" | "Cancelled" };
 export type TeamMember = { id: string; name: string; role: string; initials: string; leads: number; visits: number; bookings: number; target: number; };
+
+export type Campaign = { id: string; name: string; channel: string; startDate: string; budget: number; status: "Active" | "Draft" | "Completed" };
