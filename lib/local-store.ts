@@ -21,5 +21,7 @@ export const localStore = {
   loadVisits: () => load<SiteVisit[]>(keys.visits, seedVisits),
   saveVisits: (value: SiteVisit[]) => save(keys.visits, value),
   loadTeam: () => load<TeamMember[]>(keys.team, seedTeam),
-  saveTeam: (value: TeamMember[]) => save(keys.team, value),\n  loadCampaigns: () => load<Campaign[]>(keys.campaigns, seedCampaigns),\n  saveCampaigns: (value: Campaign[]) => save(keys.campaigns, value),
+  saveTeam: (value: TeamMember[]) => save(keys.team, value),
+  loadCampaigns: () => load<Campaign[]>(keys.campaigns, seedCampaigns),
+  saveCampaigns: (value: Campaign[]) => save(keys.campaigns, value),
 };
