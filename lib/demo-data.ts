@@ -39,3 +39,9 @@ export const seedTeam: TeamMember[] = [
  {id:"TM-3",name:"Sneha Patil",role:"Sales Executive",initials:"SP",leads:64,visits:29,bookings:5,target:64},
  {id:"TM-4",name:"Kabir Nair",role:"Relationship Manager",initials:"KN",leads:59,visits:24,bookings:4,target:59}
 ];
+
+export const seedCampaigns = [
+ {id:"CP-101",name:"October Property Enquiries",channel:"Meta Ads",startDate:"2026-10-01",budget:25000,status:"Active" as const},
+ {id:"CP-102",name:"Thane 2 BHK Search",channel:"99acres",startDate:"2026-10-04",budget:12000,status:"Active" as const},
+ {id:"CP-103",name:"Homebuyer Newsletter",channel:"Email",startDate:"2026-10-10",budget:3500,status:"Draft" as const}
+];
