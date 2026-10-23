@@ -67,7 +67,8 @@ export default function CRMApp() {
   useEffect(() => { if (ready) localStore.saveProperties(properties); }, [properties, ready]);
   useEffect(() => { if (ready) localStore.saveTasks(tasks); }, [tasks, ready]);
   useEffect(() => { if (ready) localStore.saveVisits(visits); }, [visits, ready]);
-  useEffect(() => { if (ready) localStore.saveTeam(team); }, [team, ready]);\n  useEffect(() => { if (ready) localStore.saveCampaigns(campaigns); }, [campaigns, ready]);
+  useEffect(() => { if (ready) localStore.saveTeam(team); }, [team, ready]);
+  useEffect(() => { if (ready) localStore.saveCampaigns(campaigns); }, [campaigns, ready]);
   useEffect(() => { if (!toast) return; const timer = window.setTimeout(() => setToast(""), 2600); return () => window.clearTimeout(timer); }, [toast]);
 
   const filteredLeads = useMemo(() => leads.filter((lead) => {
