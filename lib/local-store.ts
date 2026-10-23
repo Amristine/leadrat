@@ -1,7 +1,7 @@
-import type { Lead, Property, Task, SiteVisit, TeamMember } from "./types";
-import { seedLeads, seedProperties, seedTasks, seedVisits, seedTeam } from "./demo-data";
+import type { Lead, Property, Task, SiteVisit, TeamMember, Campaign } from "./types";
+import { seedLeads, seedProperties, seedTasks, seedVisits, seedTeam, seedCampaigns } from "./demo-data";
 
-const keys = { leads: "leadrat:v1:leads", properties: "leadrat:v1:properties", tasks: "leadrat:v1:tasks", visits: "leadrat:v1:visits", team: "leadrat:v1:team" } as const;
+const keys = { leads: "leadrat:v1:leads", properties: "leadrat:v1:properties", tasks: "leadrat:v1:tasks", visits: "leadrat:v1:visits", team: "leadrat:v1:team", campaigns: "leadrat:v1:campaigns" } as const;
 
 function load<T>(key: string, fallback: T): T {
   if (typeof window === "undefined") return fallback;
@@ -21,5 +21,5 @@ export const localStore = {
   loadVisits: () => load<SiteVisit[]>(keys.visits, seedVisits),
   saveVisits: (value: SiteVisit[]) => save(keys.visits, value),
   loadTeam: () => load<TeamMember[]>(keys.team, seedTeam),
-  saveTeam: (value: TeamMember[]) => save(keys.team, value),
+  saveTeam: (value: TeamMember[]) => save(keys.team, value),\n  loadCampaigns: () => load<Campaign[]>(keys.campaigns, seedCampaigns),\n  saveCampaigns: (value: Campaign[]) => save(keys.campaigns, value),
 };
