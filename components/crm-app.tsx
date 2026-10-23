@@ -5,7 +5,7 @@ import {
   Activity, ArrowRight, BarChart3, Bell, Building2, CalendarClock, CalendarDays, Check,
   CheckCircle2, ChevronDown, CircleHelp, ClipboardList, Clock3, Download, Eye, Home,
   LayoutDashboard, Mail, Menu, MessageCircle, MoreHorizontal, MapPin, Phone, Plus, Search,
-  Settings, SlidersHorizontal, Sparkles, Target, Trash2, TrendingUp, UserRound, Users, X
+  Settings, SlidersHorizontal, Target, Trash2, TrendingUp, UserRound, Users, X
 } from "lucide-react";
 import type { Activity as LeadActivity, Campaign, Lead, LeadSource, LeadStatus, Property, SiteVisit, Task, TeamMember } from "@/lib/types";
 import { localStore } from "@/lib/local-store";
@@ -15,7 +15,7 @@ type ModalKind = "lead" | "property" | "task" | "visit" | "member" | "campaign" 
 const pages: { name: Page; icon: typeof LayoutDashboard; group: "workspace" | "management" }[] = [
   { name: "Dashboard", icon: LayoutDashboard, group: "workspace" }, { name: "Manage Leads", icon: Users, group: "workspace" },
   { name: "Properties", icon: Building2, group: "workspace" }, { name: "Follow-ups", icon: CalendarClock, group: "workspace" },
-  { name: "Site Visits", icon: MapPin, group: "workspace" }, { name: "Campaigns", icon: Sparkles, group: "workspace" },
+  { name: "Site Visits", icon: MapPin, group: "workspace" }, { name: "Campaigns", icon: Target, group: "workspace" },
   { name: "Team", icon: UserRound, group: "management" }, { name: "Reports", icon: BarChart3, group: "management" },
   { name: "Settings", icon: Settings, group: "management" },
 ];
@@ -211,12 +211,12 @@ function Dashboard({leads,tasks,visits,onOpenLead,onGo,onNewTask}:{leads:Lead[];
   return <>
     <div className="stats-grid">
       <StatCard title="Total leads" value={leads.length} note="in your workspace" icon={Users}/>
-      <StatCard title="New enquiries" value={leads.filter((l)=>l.status==="New").length} note="need first contact" icon={Sparkles} tone="orange"/>
+      <StatCard title="New enquiries" value={leads.filter((l)=>l.status==="New").length} note="need first contact" icon={MessageCircle} tone="orange"/>
       <StatCard title="Site visits" value={visits.length} note="scheduled visits" icon={MapPin} tone="blue"/>
       <StatCard title="Bookings" value={booked} note="confirmed in CRM" icon={Home} tone="purple"/>
     </div>
     <div className="dashboard-grid">
-      <section className="panel"><PanelHeading title="Lead sources" subtitle="Enquiries by acquisition channel" right={<select className="select-control" defaultValue="30 days"><option>30 days</option><option>7 days</option><option>90 days</option></select>}/><LeadSourceChart leads={leads}/><div className="panel-foot"><span>Source mix</span><span><b>{leads.length}</b> total enquiries</span></div></section>
+      <section className="panel"><PanelHeading title="Lead sources" subtitle="Enquiries by acquisition channel" right={<button className="text-button" onClick={()=>onGo("Manage Leads")}>View leads <ArrowRight size={13}/></button>}/><LeadSourceChart leads={leads}/><div className="panel-foot"><span>Source mix</span><span><b>{leads.length}</b> total enquiries</span></div></section>
       <section className="panel"><PanelHeading title="Lead pipeline" subtitle="Leads by current stage" right={<button className="icon-button" onClick={()=>onGo("Manage Leads")} aria-label="View leads"><ArrowRight size={16}/></button>}/><div className="pipeline-layout"><div className="donut-chart" style={{background:stageGradient(stages,total)}}><div className="donut-inner"><b>{leads.length}</b><span>Total leads</span></div></div><div className="pipeline-legend">{stages.map((stage)=><div className="pipeline-row" key={stage.label}><i style={{background:stage.color}}/><span>{stage.label}</span><b>{stage.count}</b></div>)}</div></div><div className="panel-foot"><span>Booked leads</span><b>{booked}</b></div></section>
     </div>
     <div className="dashboard-grid lower-grid">
